@@ -22,7 +22,7 @@ $players_arr = array('!игроки', '!игрок', '!онлайн');
 // не трогать
 $data = json_decode(file_get_contents('php://input'));
 
-if ( !$data ) return 'sorry';
+if ( !$data ) die('sorry');
 if ( $data->secret !== CALLBACK_API_SECRET_KEY && $data->type !== 'confirmation' ) die('sorry');
 
 // GameQ
