@@ -13,5 +13,6 @@
 
 - define('GROUP_ACCES_KEY', 'ключ из пункта 3');
 - define('CALLBACK_API_SECRET_KEY', 'секретный ключ из пункта 4');
-- define('STR_RESPONSE', ' Строка, которую должен вернуть сервер, пункт 4');
+- define('STR_RESPONSE', 'Строка, которую должен вернуть сервер, пункт 4');
+- define('USE_CURL', 0); // 1 - use curl, 0 - file_get_contents
 - После идете в Управление > Callback API > Настройки сервера: жмете кнопку Подтвердить
