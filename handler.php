@@ -38,7 +38,7 @@ function vk_msg_send($uid, $msg) {
 		'access_token' => GROUP_ACCES_KEY,
 		'read_state' => 1,
 		'v' => '5.122',
-		'random_id' => '0'
+		'random_id' => rand(1337, 999999999999)
 	);
 	
 	$get_params = http_build_query($request_params);
