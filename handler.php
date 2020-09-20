@@ -7,17 +7,20 @@ define('GROUP_ACCES_KEY', 'qwerty');
 // Callback API, Секретный ключ (https://vk.com/юрлгруппы?act=api)
 define('CALLBACK_API_SECRET_KEY', 'qwerty');
 
+// версия vk api
+define('API_V', '5.124');
+
 // Строка, которую должен вернуть сервер (https://vk.com/юрлгруппы?act=api)
 define('STR_RESPONSE', 'qwerty');
 
 // ip/домен сервера / 82.202.173.35:27015
 define('SERVER_IP', '127.0.0.1:27015');
 
+// 1 - use curl, 0 - file_get_contents
+define('USE_CURL', 1);
+
 // показывать следующую карту. должен быть amxmodx. 1/0
 define('NEXTMAP', 1);
-
-// 1 - use curl, 0 - file_get_contents
-define('USE_CURL', 0);
 
 $info_arr = array('!инфо', '!инфа', '!информация', '!сервер');
 $players_arr = array('!игроки', '!игрок', '!онлайн');
@@ -31,14 +34,14 @@ if ( $data->secret !== CALLBACK_API_SECRET_KEY && $data->type !== 'confirmation'
 require_once('GameQ/Autoloader.php');
 $GameQ = new \GameQ\GameQ();
 
-function vk_msg_send($uid, $msg) {
+function vk_msg_send($peer_id, $msg) {
 	$request_params = array(
 		'message' => $msg,
-		'user_id' => $uid,
+		$peer_id['type'] => $peer_id['value'],
 		'access_token' => GROUP_ACCES_KEY,
 		'read_state' => 1,
-		'v' => '5.122',
-		'random_id' => rand(1337, 999999999999)
+		'random_id' => rand(1337, 999999999999),
+		'v' => API_V
 	);
 	
 	$get_params = http_build_query($request_params);
@@ -103,16 +106,23 @@ switch ( $data->type ) {
 	break;
 	
 	case 'message_new': 
-		$uid = $data->object->message->from_id;
 		$msgText = $data->object->message->text;
+
+		if ( $data->object->message->id == 0 ) {
+			$peer_id['type'] = 'peer_id';
+			$peer_id['value'] = $data->object->message->peer_id;
+		} else {
+			$peer_id['type'] = 'user_id';
+			$peer_id['value'] = $data->object->message->from_id;
+		}
 
 		if ( in_array($msgText, $info_arr) ) 
 		{
-			vk_msg_send($uid, serverStatus($GameQ));
+			vk_msg_send($peer_id, serverStatus($GameQ));
 		} 
 		else if ( in_array($msgText, $players_arr) ) 
 		{
-			vk_msg_send($uid, serverPlayers($GameQ));
+			vk_msg_send($peer_id, serverPlayers($GameQ));
 		}
 		echo 'ok';
 	break;
